@@ -4,7 +4,7 @@ exports.getAllTodos = (request, response) => {
 	db
 		.collection('cf')
         .orderBy('createdAt', 'desc')
-        .limit(3)
+        .limit(10)
         .get()
 		.then((data) => {
 			let todos = [];
@@ -52,8 +52,7 @@ exports.getAllTodos = (request, response) => {
 };
 
 exports.postOneTodo = (request, response) => {
-    // we only need this for the HSC number 
-    console.log(request.body)
+
 	if (request.body.case === '') {
 		return response.status(400).json({ case: 'Case must not be empty!' });
     }
@@ -150,21 +149,19 @@ exports.editTodo = ( request, response ) => {
 };
 
 exports.getOneTodo = (request, response) => {
-    console.log(request.params.todoId)
-	db
-		.collection('cf')
-        .where("hsc", "==", request.params.todoId)
+    db
+        .collection('cf')
+        .where('hsc','==',request.params.hsc)
         .get()
-		.then((doc) => {
-			if (!doc.exists) {
+		.then((qsnapshot) => {
+			if (qsnapshot.docs.length <= 0) {
 				return response.status(404).json(
                     { 
                         error: 'Todo not found' 
                     });
-			}
-			TodoData = doc.data();
-			TodoData.todoId = doc.id;
-			return response.json(TodoData);
+            }
+			TodoData = qsnapshot.docs[0];
+			return response.json(new Array(TodoData.data()));
 		})
 		.catch((err) => {
 			console.error(err);

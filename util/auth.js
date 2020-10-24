@@ -1,8 +1,8 @@
 const { admin, db } = require('./admin');
 
-module.exports = (request={}, response, next) => {
+module.exports = (request, response, next) => {
 	let idToken;
-	console.log(`request headers ${request.headers.authorization}`)
+	console.log(`checking token: ${request.headers.authorization}`)
 	if (request.headers.authorization && request.headers.authorization.startsWith('Bearer ')) {
 		idToken = request.headers.authorization.split('Bearer ')[1];
 	} else {
@@ -14,7 +14,6 @@ module.exports = (request={}, response, next) => {
 		.verifyIdToken(idToken)
 		.then((decodedToken) => {
 			request.user = decodedToken;
-			console.log(request.user)
 			return db.collection('users').where('userId', '==', request.user.uid).limit(1).get();
 		})
 		.then((data) => {

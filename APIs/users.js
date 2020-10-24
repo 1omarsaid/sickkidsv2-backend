@@ -191,3 +191,16 @@ exports.updateUserDetails = (request, response) => {
         });
     });
 }
+
+
+exports.resetUserPassword = (request, response) => {
+    firebase.auth().sendPasswordResetEmail(request.body.email)
+      .then(() => {
+        response.json({message: 'Please check your inbox for further instructions'});
+      }).catch((error) => {
+        console.error(error);
+        return response.status(500).json({ 
+            message: "Cannot send email"
+        });
+      })
+}
