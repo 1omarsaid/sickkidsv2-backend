@@ -3,8 +3,7 @@ const { db } = require('../util/admin');
 exports.getAllTodos = (request, response) => {
 	db
 		.collection('cf')
-        .orderBy('createdAt', 'desc')
-        .limit(10)
+        .limit(16)
         .get()
 		.then((data) => {
 			let todos = [];
